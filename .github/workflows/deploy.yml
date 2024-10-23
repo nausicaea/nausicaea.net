@@ -28,7 +28,7 @@ jobs:
           delete: true
           uploads: |
             ./dist/ => ${{ secrets.REMOTE_TARGET }}
-          ignores: |
+          ignore: |
             *.git
             .htaccess
             .htpasswd
