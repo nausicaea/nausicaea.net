@@ -16,14 +16,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-      - name: Install Node.js
-        uses: actions/setup-node@v4.0.4
-        with:
-          node-version: '16.x'
-      - name: Install npm dependencies
-        run: npm install
-      - name: Run build task
-        run: npm run build --if-present
       - name: Deploy via SFTP
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
