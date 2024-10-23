@@ -1,0 +1,24 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Contact: mailto:security@nausicaea.net
+Expires: 2028-10-23T21:59:00.000Z
+Encryption: https://nausicaea.net/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://nausicaea.net/.well-known/security.txt
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEENUE5CYdI69OiyVZeLsnO9GgcN+AFAmcYynEACgkQLsnO9Ggc
+N+CIdg/9GBCwNAPAMmTGjtPrVhHVcGWTKLyk/1uEj8e7u3Jlx01adIDDzjtRWRD4
+v2VBExEYMJNMCEPMo19t5GSpZefc/WPmbykFP8cq29MYhCV16hQOUWaiMKkTw9jW
+4CWTxc1OPHc0r3d/lvks1rbVSjX9KkzGZA4gGVaK552vbCbMeDhHMJTs9McqDTJK
+GNy9Qeh/lbf389m41Ek1iJHVgCIAhHYM+80SZ18BlZNu8n4KKiQ3z7QC8EkFvXBL
+0oE/bpqQFiG0lDpN9dNq1RBxagWzciQrYUqmFORr+EBCs3EE7u75R+r2g4C4o7Oy
+jQ4Li5QS+Gzo4AoDbrmK0gmPRmTZ+NrEHlotw5eyIuCGp4go4Geo3OinYljF3BzE
+K5dmtbG1rZ/hVjVCi6PnKxFG/UpEgaHL2Kzgc9obLXfT67DBjItjYvxUeZtF/Efh
+U83Ovcb8hdCCaqaLNoEZ5q5Ox1X3RANi9pB2+haLGtrBjZfR9gMZlU8nVjkfnZ9H
+y1mdrv9ysAu3CnoXZiFgjcSjQjKRBctSEe4jwQdj9b9w6uJ9T4LBRMyeAdYsp6Ns
+lrVKKyawZYqZqfQwDMr4TOxUEnlxV1Hs7OtZzP5glAYo464ACRRonU1/7lQ+IC45
+sky/rEywyAQbLtvFx36xMWCOz6kgYo1zhgqunfDDzQCrjiOods8=
+=Izsg
+-----END PGP SIGNATURE-----
