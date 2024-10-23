@@ -24,8 +24,6 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          dry-run: true
-          delete: true
           uploads: |
             ./dist/ => ${{ secrets.REMOTE_TARGET }}
           ignore: |
