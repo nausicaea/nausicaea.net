@@ -16,14 +16,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-      - name: Deploy via SFTP
-        uses: easingthemes/ssh-deploy@v5.1.0
-        with:
-          ARGS: "-rlgoDzvc -i --delete -n"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SOURCE: "dist/"
-          TARGET: ${{ secrets.REMOTE_TARGET }}
-          EXCLUDE: ".htaccess,.git/,.well-known/acme-challenge/"
 
+      - name: Deploy via SFTP
+        uses: Dylan700/sftp-upload-action@v1.2.3
+        with:
+          server: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          dry-run: true
+          delete: true
+          uploads: |
+            ./dist/ => ${{ secrets.REMOTE_TARGET }}
+          ignores: |
+            *.git
+            .htaccess
+            .htpasswd
