@@ -15,10 +15,10 @@ jobs:
     environment: hetzner-prod
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Deploy via SFTP
-        uses: Dylan700/sftp-upload-action@v1.2.3
+        uses: Dylan700/sftp-upload-action@50ed7273493353a60dace713957c36b02dd87bec # v1.2.3
         with:
           server: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
