@@ -29,7 +29,3 @@ jobs:
           remote-path: ${{ secrets.REMOTE_TARGET }}
           local-path: ./dist/
           artifacts: true
-          sync-delta-excludes: |
-            *.git
-            .htaccess
-            .htpasswd
