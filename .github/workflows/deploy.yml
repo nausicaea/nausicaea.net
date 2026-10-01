@@ -28,4 +28,5 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           remote-path: ${{ secrets.REMOTE_TARGET }}
           local-path: ${{ github.workspace }}/dist/
+          sync: "full"
           artifacts: true
