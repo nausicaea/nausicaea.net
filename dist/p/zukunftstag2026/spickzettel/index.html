@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;; script-src &#39;self&#39; &#39;wasm-unsafe-eval&#39; &#39;sha256-OTF+3I2Eor6y3fVQY82VpAB3AR8XtxvE6ev43073OY0=&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39;; img-src &#39;self&#39; data:; font-src &#39;self&#39;; connect-src &#39;self&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+  <script>(() => {
+	const KEY = "ccu-prefs";
+	const mq = (q) => window.matchMedia?.(q).matches ?? false;
+	const CHOICES = {
+		theme: ["crt", "paper"],
+		font: [
+			"retro",
+			"plex",
+			"hyper",
+			"dyslexic"
+		],
+		size: [
+			1,
+			1.15,
+			1.3,
+			1.5
+		],
+		vision: [
+			"default",
+			"redgreen",
+			"blueyellow",
+			"mono"
+		]
+	};
+	const systemDefaults = () => ({
+		theme: mq("(prefers-color-scheme: light)") ? "paper" : "crt",
+		font: "retro",
+		size: 1,
+		vision: "default",
+		contrast: mq("(prefers-contrast: more)"),
+		reduceEffects: mq("(prefers-reduced-motion: reduce)"),
+		tabIndents: true
+	});
+	/** Keeps only known keys with valid values; everything else falls back to the default. */
+	function sanitize(input) {
+		const d = systemDefaults();
+		const pick = (key) => {
+			const v = input[key];
+			const allowed = CHOICES[key];
+			if (allowed) return allowed.includes(v) ? v : d[key];
+			return typeof v === typeof d[key] ? v : d[key];
+		};
+		return {
+			theme: pick("theme"),
+			font: pick("font"),
+			size: pick("size"),
+			vision: pick("vision"),
+			contrast: pick("contrast"),
+			reduceEffects: pick("reduceEffects"),
+			tabIndents: pick("tabIndents")
+		};
+	}
+	function apply(p) {
+		const r = document.documentElement;
+		r.dataset.theme = p.theme;
+		r.dataset.font = p.font;
+		r.dataset.vision = p.vision;
+		if (p.contrast) r.dataset.contrast = "high";
+		else delete r.dataset.contrast;
+		if (p.reduceEffects) r.dataset.effects = "reduced";
+		else delete r.dataset.effects;
+		r.style.setProperty("--scale", String(p.size));
+	}
+	function save(p) {
+		try {
+			localStorage.setItem(KEY, JSON.stringify(p));
+		} catch {}
+	}
+	let stored = {};
+	try {
+		const parsed = JSON.parse(localStorage.getItem(KEY) ?? "{}");
+		if (parsed && typeof parsed === "object") stored = parsed;
+	} catch {}
+	try {
+		// carry over the theme saved by the first version of the page
+		const legacy = localStorage.getItem("ccu-theme");
+		if (legacy && !stored.theme) stored.theme = legacy;
+	} catch {}
+	let prefs = sanitize(stored);
+	apply(prefs);
+	const listeners = [];
+	const api = {
+		get: () => ({ ...prefs }),
+		set(key, value) {
+			const next = sanitize({
+				...prefs,
+				[key]: value
+			});
+			const changed = next[key] !== prefs[key];
+			prefs = next;
+			apply(prefs);
+			save(prefs);
+			if (changed) listeners.forEach((fn) => fn(key, prefs));
+			return api.get();
+		},
+		reset() {
+			prefs = sanitize({ theme: prefs.theme });
+			apply(prefs);
+			save(prefs);
+			listeners.forEach((fn) => fn("*", prefs));
+			return api.get();
+		},
+		onChange(fn) {
+			listeners.push(fn);
+		}
+	};
+	window.CCUPrefs = api;
+})();
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="cs.title">SQL-Spickzettel</title>
+<!-- src/prefs-init.ts is compiled and inlined here (see vite.config.ts) -->
+  <script type="module" crossorigin src="../assets/spickzettel-CnskcpsX.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/i18n-dom-Bkr1pGHQ.js">
+  <link rel="modulepreload" crossorigin href="../assets/announce-CrGl40at.js">
+  <link rel="stylesheet" crossorigin href="../assets/announce-o5XMxsGw.css">
+  <link rel="stylesheet" crossorigin href="../assets/spickzettel-Sr3ZDY-l.css">
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="cs.skip">Zum Inhalt springen</a>
+
+<div class="sheet">
+  <header class="masthead">
+    <h1 class="unit"><span data-i18n="cs.title">SQL-Spickzettel</span><small data-i18n="cs.subtitle">Cybercrime Unit, zum schnellen Nachschauen</small></h1>
+    <div class="masthead-tools">
+      <a class="btn" href="../index.html" data-i18n="cs.toTerminal">Zum Terminal</a>
+      <button id="langBtn" type="button" lang="en" data-i18n="lang.switchTo">English</button>
+      <button id="themeBtn" type="button">Zu Papier wechseln</button>
+    </div>
+  </header>
+
+  <main id="main">
+  <nav class="toc" aria-label="Inhalt" data-i18n-aria-label="cs.toc">
+    <a href="#select">SELECT</a>
+    <a href="#where">WHERE</a>
+    <a href="#like">LIKE</a>
+    <a href="#between">BETWEEN</a>
+    <a href="#andor">AND / OR</a>
+    <a href="#order">ORDER BY / LIMIT</a>
+    <a href="#keys" data-i18n="cs.keys.title">Schlüssel</a>
+    <a href="#join">JOIN</a>
+    <a href="#fehler" data-i18n="cs.errors.title">Fehler</a>
+  </nav>
+
+  <div class="cards">
+    <section class="card" id="alles" aria-labelledby="h-alles">
+      <h2 id="h-alles" data-i18n="cs.overview.title">Überblick</h2>
+      <div class="split">
+        <div class="side">
+          <h3>SELECT</h3>
+          <pre class="sql no-prompt" data-i18n="cs.overview.select">SELECT name, jahre        -- welche Spalten?
+FROM haustier             -- aus welcher Tabelle?
+WHERE jahre &gt;= 3          -- welche Zeilen?
+  AND name LIKE '%l%'     -- und was noch?
+ORDER BY jahre DESC       -- sortiert wie?
+LIMIT 3;                  -- wie viele?</pre>
+        </div>
+        <div class="side">
+          <h3>JOIN</h3>
+          <pre class="sql no-prompt" data-i18n="cs.overview.join">SELECT h.name, h.jahre, t.name  -- welche Spalten?
+FROM haustier h                 -- erste Tabelle
+JOIN tierart t                  -- zweite Tabelle
+  ON h.tierart_id = t.id        -- was passt zusammen?
+WHERE t.name != 'Katze'         -- welche Zeilen?
+ORDER BY h.jahre DESC           -- sortiert wie?
+LIMIT 3;                        -- wie viele?</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="select" aria-labelledby="h-select">
+      <h2 id="h-select">SELECT</h2>
+      <p><span data-i18n="cs.select.intro">Spalten aus einer Tabelle holen.</span> <code>*</code> <span data-i18n="cs.select.star">= alle Spalten, mehrere Spalten mit Komma trennen.</span></p>
+      <pre class="sql" data-i18n="cs.select.syntax">SELECT * FROM tabelle;
+SELECT spalte1, spalte2 FROM tabelle;</pre>
+      <div class="widget" data-widget="columns"><p class="empty" data-i18n="cs.loading">Wird geladen …</p></div>
+    </section>
+
+    <section class="card" id="where" aria-labelledby="h-where">
+      <h2 id="h-where">WHERE</h2>
+      <p data-i18n="cs.where.intro">Nur Zeilen, für die die Bedingung stimmt.</p>
+      <pre class="sql" data-i18n="cs.where.syntax">SELECT * FROM tabelle WHERE bedingung;</pre>
+      <div class="split">
+        <div class="side">
+          <table class="ref">
+            <thead><tr><th scope="col" data-i18n="cs.where.sign">Zeichen</th><th scope="col" data-i18n="cs.where.means">heisst</th></tr></thead>
+            <tbody>
+              <tr><td><code>=</code></td><td data-i18n="cs.where.eq">gleich</td></tr>
+              <tr><td><code>!=</code></td><td data-i18n="cs.where.ne">nicht gleich</td></tr>
+              <tr><td><code>&gt;</code></td><td data-i18n="cs.where.gt">grösser</td></tr>
+              <tr><td><code>&gt;=</code></td><td data-i18n="cs.where.ge">grösser oder gleich</td></tr>
+              <tr><td><code>&lt;</code></td><td data-i18n="cs.where.lt">kleiner</td></tr>
+              <tr><td><code>&lt;=</code></td><td data-i18n="cs.where.le">kleiner oder gleich</td></tr>
+              <tr><td><code>BETWEEN</code></td><td data-i18n="cs.where.between">zwischen (mit Grenzen)</td></tr>
+              <tr><td><code>LIKE</code></td><td data-i18n="cs.where.like">Muster</td></tr>
+              <tr><td><code>IS NULL</code></td><td data-i18n="cs.where.null">leer</td></tr>
+            </tbody>
+          </table>
+          <h3 id="like"><span data-i18n="cs.like.title">LIKE mit</span> <code>%</code></h3>
+          <p><code>%</code> <span data-i18n="cs.like.percent">= beliebig viele Zeichen.</span></p>
+          <div class="patterns">
+            <div class="pattern"><code class="t-str">'a%'</code><span class="slots"><b>a</b><i>…</i></span><span data-i18n="cs.like.starts">fängt mit a an</span></div>
+            <div class="pattern"><code class="t-str">'%a'</code><span class="slots"><i>…</i><b>a</b></span><span data-i18n="cs.like.ends">hört mit a auf</span></div>
+            <div class="pattern"><code class="t-str">'%a%'</code><span class="slots"><i>…</i><b>a</b><i>…</i></span><span data-i18n="cs.like.contains">enthält a</span></div>
+          </div>
+          <h3 id="between">BETWEEN</h3>
+          <p><code>BETWEEN</code> <span data-i18n="cs.between.text">= zwischen zwei Werten, zum Beispiel zwei Zeitpunkten. Beide Grenzen zählen mit.</span></p>
+          <p><span data-i18n="cs.between.format">Zeitpunkte stehen in Anführungszeichen, im Format</span> <code class="t-str" data-i18n="cs.between.pattern">'JJJJ-MM-TT hh:mm:ss'</code>.</p>
+          <pre class="sql" data-i18n="cs.between.example">WHERE gefuettert
+  BETWEEN '2026-11-10 08:00:00'
+      AND '2026-11-10 10:00:00'
+-- ist dasselbe wie:
+WHERE gefuettert &gt;= '2026-11-10 08:00:00'
+  AND gefuettert &lt;= '2026-11-10 10:00:00'</pre>
+        </div>
+        <div class="widget" data-widget="where"><p class="empty" data-i18n="cs.loading">Wird geladen …</p></div>
+      </div>
+    </section>
+
+    <section class="card" id="andor" aria-labelledby="h-andor">
+      <h2 id="h-andor">AND / OR</h2>
+      <p><code>AND</code><span data-i18n="cs.andor.and">: beide müssen stimmen.</span> <code>OR</code><span data-i18n="cs.andor.or">: eine reicht.</span></p>
+      <pre class="sql" data-i18n="cs.andor.syntax">WHERE bedingung1 AND bedingung2
+WHERE bedingung1 OR bedingung2</pre>
+      <div class="widget" data-widget="andor"><p class="empty" data-i18n="cs.loading">Wird geladen …</p></div>
+    </section>
+
+    <section class="card" id="order" aria-labelledby="h-order">
+      <h2 id="h-order">ORDER BY / LIMIT</h2>
+      <p><code>ASC</code> <span data-i18n="cs.order.asc">= klein → gross (Standard).</span> <code>DESC</code> <span data-i18n="cs.order.desc">= gross → klein.</span> <code>LIMIT n</code> <span data-i18n="cs.order.limit">= nur die ersten n Zeilen.</span></p>
+      <pre class="sql" data-i18n="cs.order.syntax">SELECT * FROM tabelle ORDER BY spalte DESC LIMIT 3;</pre>
+      <div class="widget" data-widget="sort"><p class="empty" data-i18n="cs.loading">Wird geladen …</p></div>
+    </section>
+
+    <section class="card" id="join" aria-labelledby="h-join">
+      <h2 id="h-join">JOIN</h2>
+      <div class="split">
+        <div class="side">
+          <h3 id="keys" data-i18n="cs.keys.title">Schlüssel</h3>
+          <dl class="defs">
+            <dt><span class="badge">PK</span> <span data-i18n="cs.keys.pk">Primärschlüssel</span></dt>
+            <dd><span data-i18n="cs.keys.pkText">Macht jede Zeile eindeutig, meist</span> <code>id</code>.</dd>
+            <dt><span class="badge">FK</span> <span data-i18n="cs.keys.fk">Fremdschlüssel</span></dt>
+            <dd><span data-i18n="cs.keys.fkText">Zeigt auf den PK einer anderen Tabelle, z. B.</span> <code>haustier.tierart_id</code> → <code>tierart.id</code>.</dd>
+          </dl>
+        </div>
+        <div class="side">
+          <p><span data-i18n="cs.join.intro">Zwei Tabellen verbinden: Zeilen, bei denen die Spalten nach</span> <code>ON</code> <span data-i18n="cs.join.equal">gleich sind.</span> <code>a</code> <span data-i18n="cs.join.and">und</span> <code>b</code> <span data-i18n="cs.join.aliases">sind Spitznamen.</span></p>
+          <pre class="sql" data-i18n="cs.join.syntax">SELECT a.spalte, b.spalte
+FROM tabelle1 a
+JOIN tabelle2 b ON a.tabelle2_id = b.id;</pre>
+        </div>
+      </div>
+      <div class="widget" data-widget="join"><p class="empty" data-i18n="cs.loading">Wird geladen …</p></div>
+    </section>
+
+    <section class="card" id="fehler" aria-labelledby="h-fehler">
+      <h2 id="h-fehler" data-i18n="cs.errors.title">Fehler</h2>
+      <div class="errs">
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">no such table: haustiere</code><span data-i18n="cs.errors.table">Tabellenname falsch geschrieben. Schau im Terminal unter «Tipp».</span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT * FROM haustiere;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT * FROM haustier;</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">no such column: vorname</code><span data-i18n="cs.errors.column">Diese Spalte gibt es in der Tabelle nicht.</span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT vorname FROM haustier;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT name FROM haustier;</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">no such column: Luna</code><span data-i18n="cs.errors.quotes">Anführungszeichen um den Text vergessen.</span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT * FROM haustier WHERE name = Luna;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT * FROM haustier WHERE name = 'Luna';</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">unrecognized token: "'Luna;"</code><span data-i18n="cs.errors.closingQuote">Schliessendes Anführungszeichen vergessen.</span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT * FROM haustier WHERE name = 'Luna;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT * FROM haustier WHERE name = 'Luna';</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">near "SELEC": syntax error</code><span data-i18n="cs.errors.keyword">Befehlswort falsch geschrieben.</span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELEC * FROM haustier;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT * FROM haustier;</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">near "FROM": syntax error</code><span><span data-i18n="cs.errors.comma">Komma zu viel vor</span> <code>FROM</code>.</span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT name, FROM haustier;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT name FROM haustier;</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">near "tierart_id": syntax error</code><span><code>AND</code> <span data-i18n="cs.errors.or">oder</span> <code>OR</code> <span data-i18n="cs.errors.andOr">zwischen zwei Bedingungen vergessen.</span></span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT * FROM haustier WHERE jahre &gt; 3 tierart_id = 1;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT * FROM haustier WHERE jahre &gt; 3 AND tierart_id = 1;</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">near "WHERE": syntax error</code><span><span data-i18n="cs.errors.order">Falsche Reihenfolge:</span> <code>WHERE</code> <span data-i18n="cs.errors.comesBefore">kommt vor</span> <code>ORDER BY</code>.</span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT * FROM haustier ORDER BY name WHERE jahre &gt; 3;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT * FROM haustier WHERE jahre &gt; 3 ORDER BY name;</pre></div>
+        </div>
+        <div class="err-row">
+          <div class="err-what"><code class="err-msg">ambiguous column name: name</code><span><span data-i18n="cs.errors.ambiguous">Beide Tabellen haben eine Spalte</span> <code>name</code><span data-i18n="cs.errors.alias">. Schreib den Spitznamen davor.</span></span></div>
+          <div class="err-bad"><span class="tag" data-i18n="cs.errors.bad">Falsch</span><pre class="sql">SELECT name FROM haustier h
+JOIN tierart t ON h.tierart_id = t.id;</pre></div>
+          <div class="err-good"><span class="tag" data-i18n="cs.errors.good">Richtig</span><pre class="sql">SELECT h.name FROM haustier h
+JOIN tierart t ON h.tierart_id = t.id;</pre></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  </main>
+
+  <footer class="footer">
+    <a href="../index.html" data-i18n="cs.backToTerminal">Zurück zum Terminal</a>
+  </footer>
+</div>
+
+<div id="announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+</body>
+</html>

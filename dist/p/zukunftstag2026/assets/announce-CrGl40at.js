@@ -1,0 +1,1 @@
+function e(e,t){let n=document.getElementById(e);if(!n)throw Error(`#${e} is missing from index.html`);if(t&&!(n instanceof t))throw Error(`#${e} is not a ${t.name}`);return n}function t(e){let t;return n=>{clearTimeout(t),e.textContent=``,t=setTimeout(()=>{e.textContent=n},60)}}export{e as n,t};
